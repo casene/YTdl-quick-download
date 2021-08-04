@@ -2,7 +2,7 @@
 
 #### Quick Description:
 
-A pretty simple bash script that downloads a Youtube video, the description file, the JSON info file and subs if avaialable. The resulting video and audio files are muxed to an mkv file. The file names are then sanitized and moved to a newly created directory with the same name as the downloaded video.
+A pretty simple bash script that downloads a Youtube video, the description file, the JSON info file and subs if available. The resulting video and audio files are muxed to an mkv file. The file names are then sanitized and moved to a newly created directory with the same name as the downloaded video.
 
 #### Usage:
 
