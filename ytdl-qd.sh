@@ -98,7 +98,7 @@ if [[ $? -eq 0 && -s $downloadpath/meta ]]
         esac
 fi
 
-# create yt file directory
+# create youtube file directory
 mkdir $downloadpath/$newtitle
 
 # loop through files in /tmp and move them to dir if
