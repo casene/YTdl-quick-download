@@ -8,19 +8,16 @@
 # script variables (Change this to your prefered location)
 downloadpath=/tmp
 
+# set error and exit traps
 set -eE
 trap 'find $downloadpath -user "$USER" -exec rm -rf "{}" \; && echo Fatal Error - Something has gone wrong, cleanup attempted.' ERR
 trap 'rm -rf $downloadpath/meta' EXIT
 
 # set OS environment
-
 OS=$(uname)
 
 # sanity check
-
-which jq > /dev/null 2>&1
-
-if [ ! $? -eq 0 ]
+if [ ! $(command -v jq) ]
     then
         case $OS in
             Darwin )
@@ -31,16 +28,10 @@ if [ ! $? -eq 0 ]
                 echo "JQ is not installed, exiting with status 1"
                 exit 1
                 ;;
-            * )
-                echo "This script can be run on OSX or Linux only, exiting with status 1"
-                exit 1
-                ;;
         esac
 fi
 
-which youtube-dl > /dev/null 2>&1
-
-if [ ! $? -eq 0 ]
+if [ ! $(command -v youtube-dl) ]
     then
         case $OS in
             Darwin )
@@ -49,10 +40,6 @@ if [ ! $? -eq 0 ]
                 ;;
             Linux )
                 echo "Youtube-dl is not installed, exiting with status 1"
-                exit 1
-                ;;
-            * )
-                echo "This script is designed for use in OSX or Linux only, exiting with status 1"
                 exit 1
                 ;;
         esac
