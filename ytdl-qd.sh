@@ -8,6 +8,10 @@
 # script variables (Change this to your prefered location)
 downloadpath=/tmp
 
+set -eE
+trap 'find $downloadpath -user "$USER" -exec rm -rf "{}" \; && echo Fatal Error - Something has gone wrong, cleanup attempted.' ERR
+trap 'rm -rf $downloadpath/meta' EXIT
+
 # set OS environment
 
 OS=$(uname)
