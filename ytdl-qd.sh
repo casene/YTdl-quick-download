@@ -10,7 +10,7 @@ downloadpath=/tmp
 
 # set error and exit traps
 set -eE
-trap 'find $downloadpath -user "$USER" -exec rm -rf "{}" \; && echo Fatal Error - Something has gone wrong, cleanup attempted.' ERR
+trap 'find -L $downloadpath -maxdepth 1 -user "$USER" -exec rm -rf {} \; && echo Fatal Error - Something has gone wrong, cleanup attempted.' ERR
 trap 'rm -rf $downloadpath/meta' EXIT
 
 # set OS environment
@@ -48,15 +48,14 @@ fi
 ## if you are here - checks returned okay
 ## script starts here
 
-
 # ytdl command arguments (add,remove or modify to your liking)
-# the whole command is redirected to stdout to a file named meta in /tmp
+# the whole command is redirected to stdout to a file named meta in $downloadpath
 if [ $OS = "Darwin" ]
     then
-        logpath=("~/Library/Logs/youtube-dl-downloads.log")
+        logpath=("~/Library/Logs/ytdlqd-downloads.log")
 elif [ $OS = "Linux" ]
     then
-        logpath=("~/youtube-dl-downloads.log")
+        logpath=("~/ytdlqd-downloads.log")
 fi
 
 youtube-dl -f 'bestvideo[ext=mp4]+bestaudio[ext=m4a]' \
@@ -74,7 +73,7 @@ ${logpath[@]} \
 
 # check ytdl exit status. if 0 then execute if block else exit
 # with error 2
-if [ $? -eq 0 ]
+if [[ $? -eq 0 && -s $downloadpath/meta ]]
     then
         title=$(basename $(jq -r '._filename' $downloadpath/meta))
 
@@ -89,36 +88,29 @@ if [ $? -eq 0 ]
     else
         case $OS in
             Darwin )
-                osascript -e 'display notification "Ytdl exited with errors, check /tmp dir for downloaded files" with title "Fatal Error"'
+                osascript -e 'display notification "Nothing downloaded, make sure video has not already been downloaded" with title "Error-"'
                 exit 1
                 ;;
             Linux )
-                echo "Ytdl exited with errors, check /tmp dir for downloaded files"
+                echo "Nothing downloaded, make sure video has not already been downloaded"
                 exit 1
                 ;;
         esac
 fi
 
-
 # create yt file directory
 mkdir $downloadpath/$newtitle
-
-
 
 # loop through files in /tmp and move them to dir if
 #they match the regex $title
 for file in $(ls $downloadpath/)
-do
-if [[ $file =~ $title ]]
-then
-    mv "$downloadpath/$file" "$downloadpath/$newtitle/$newtitle.${file##*.}"
-fi
-done
-
-
-# cleanup
-rm $downloadpath/meta
+    do
+        if [[ $file =~ $title ]]
+            then
+                mv "$downloadpath/$file" "$downloadpath/$newtitle/$newtitle.${file##*.}"
+        fi
+    done
 
 # There should now be a directory with the name of your video
-# in the /tmp directory with the video, description, subs(if available)
+# in the $downloadpath directory with the video, description, subs(if available)
 # and json info file.
