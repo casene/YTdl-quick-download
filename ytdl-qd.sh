@@ -5,7 +5,8 @@
 
 #### ---------------####
 
-
+# script variables (Change this to your prefered location)
+downloadpath=/tmp
 
 # set OS environment
 
@@ -55,10 +56,6 @@ fi
 
 ## if you are here - checks returned okay
 ## script starts here
-
-
-# script variables (Change this to your prefered location)
-downloadpath=/tmp
 
 
 # ytdl command arguments (add,remove or modify to your liking)
@@ -134,5 +131,3 @@ rm $downloadpath/meta
 # There should now be a directory with the name of your video
 # in the /tmp directory with the video, description, subs(if available)
 # and json info file.
-
-
